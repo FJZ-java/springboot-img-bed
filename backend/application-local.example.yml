@@ -1,0 +1,4 @@
+# 复制本文件为 application-local.yml 并填入真实值（本文件仅作模板，可提交）
+imgbed:
+  github:
+    token: YOUR_GITHUB_TOKEN_HERE

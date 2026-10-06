@@ -1,0 +1,78 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: img-bed
+  # 本地密钥文件（已被 .gitignore 忽略，不会提交）；文件不存在也不报错
+  config.import: optional:file:./application-local.yml
+  datasource:
+    driver-class-name: org.sqlite.JDBC
+    # 用固定绝对路径（可用环境变量 DB_URL 覆盖）：
+    # 相对路径 ./data/imgbed.db 是按「进程工作目录」解析的，
+    # 换个目录启动（IDE / 双击 jar / 其他终端）会读（并新建）另一个空库，看起来就像「没数据」。
+    url: ${DB_URL:jdbc:sqlite:D:/maven/apache-maven-3.9.10/mvn_repo/springboot-img-bed/backend/data/imgbed.db}
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+  jackson:
+    time-zone: Asia/Shanghai
+    date-format: yyyy-MM-dd HH:mm:ss
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+
+# ====== 自定义配置 ======
+# ⚠️ 敏感项（github.token / jwt.secret）一律不写进本文件，通过环境变量注入：
+#   PowerShell: $env:GITHUB_TOKEN="xxx"; $env:JWT_SECRET="xxx"
+imgbed:
+  github:
+    # 真实 Token 放在 backend/application-local.yml（已被 gitignore，不会推上 GitHub）
+    token: ${GITHUB_TOKEN:}
+    owner: ${GITHUB_OWNER:FJZ-java}
+    repo: ${GITHUB_REPO:boot-img-bed}
+    branch: ${GITHUB_BRANCH:main}
+    # 仓库内存储目录前缀
+    dir-prefix: ${GITHUB_DIR_PREFIX:images}
+  jwt:
+    # 默认值开箱即用；想换的话改这里或用环境变量 JWT_SECRET 即可（更换后旧令牌全部失效）
+    secret: ${JWT_SECRET:imgbed-jwt-secret-please-change-me-0123456789abcdef}
+    # 令牌有效期：7 天（毫秒）
+    ttl: 604800000
+  # 分享链接：配置站点地址后，返回的分享链接是绝对地址；留空则返回 /share/{code}
+  share:
+    base-url: ${SHARE_BASE_URL:}
+  security:
+    # 管理员账号密码已内置为固定值（见 AdminInitializer），无需在此配置；
+    # 生产环境如需更换，用环境变量 ADMIN_USERNAME / ADMIN_PASSWORD / ADMIN_USERNAMES 覆盖
+    # 登录防爆破：同一 IP+账号 10 分钟内最多失败 5 次；同一 IP 每分钟最多尝试 20 次
+    login-max-fails: ${LOGIN_MAX_FAILS:5}
+    login-lock-minutes: ${LOGIN_LOCK_MINUTES:10}
+    login-ip-max-per-minute: ${LOGIN_IP_MAX_PER_MINUTE:20}
+    # 注册限流：同一 IP 每小时最多注册 10 个账号
+    register-max-per-hour: ${REGISTER_MAX_PER_HOUR:10}
+    # 登录用户上传限流：每用户每小时最多 200 张
+    upload-max-per-hour: ${UPLOAD_MAX_PER_HOUR:200}
+    # 公开接口（分享页等）限流：同一 IP 每分钟最多 60 次
+    public-max-per-minute: ${PUBLIC_MAX_PER_MINUTE:60}
+  cors:
+    # 开发环境：本机任意端口（前端 Vite 端口冲突时会自动 +1）
+    # 生产环境务必改为真实域名，如 https://imgbed.your-domain.com
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:[*],http://127.0.0.1:[*]}
+  guest:
+    # 游客上传：允许未登录用户直接上传体验（不写入上传记录）
+    enabled: ${GUEST_UPLOAD_ENABLED:true}
+    # 单 IP 每小时最多上传张数，防止被刷爆仓库
+    max-per-hour: ${GUEST_UPLOAD_MAX_PER_HOUR:30}
+
+logging:
+  level:
+    com.fjz.imgbed: info

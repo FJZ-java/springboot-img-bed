@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.vscode/
+.idea/
+*.local
+# Vite 配置热更新产生的临时文件
+vite.config.js.timestamp-*.mjs

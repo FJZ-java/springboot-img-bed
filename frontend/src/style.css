@@ -1,0 +1,263 @@
+:root {
+  --bg: #0a0a0f;
+  --bg-soft: rgba(255, 255, 255, 0.04);
+  --border: rgba(255, 255, 255, 0.08);
+  --text: #e6e6eb;
+  --text-dim: #8b8b99;
+  --accent: #7c5cff;
+  --accent2: #22d3ee;
+  font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* 渐变光斑背景 */
+.aurora-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora-bg::before,
+.aurora-bg::after {
+  content: '';
+  position: absolute;
+  width: 60vw;
+  height: 60vw;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.22;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+.aurora-bg::before {
+  background: radial-gradient(circle, #7c5cff 0%, transparent 70%);
+  top: -20vw;
+  left: -15vw;
+}
+.aurora-bg::after {
+  background: radial-gradient(circle, #22d3ee 0%, transparent 70%);
+  bottom: -25vw;
+  right: -15vw;
+  animation-delay: -9s;
+}
+@keyframes drift {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(8vw, 6vh) scale(1.15); }
+}
+
+/* 玻璃拟态卡片 */
+.glass-card {
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.gradient-text {
+  background: linear-gradient(120deg, #a78bfa, #22d3ee);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 页面过渡 */
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+.fade-enter-from { opacity: 0; transform: translateY(8px); }
+.fade-leave-to { opacity: 0; }
+
+/* 弹窗遮罩：保持背景壁纸隐约可见 */
+.n-modal-mask {
+  background: rgba(5, 8, 14, 0.42) !important;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ==================== 认证页（登录 / 注册） ==================== */
+.auth-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+}
+
+/* —— 左侧品牌区 —— */
+.auth-brand {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 48px 56px;
+  overflow: hidden;
+  border-right: 1px solid var(--border);
+  background:
+    radial-gradient(120% 90% at 8% 0%, rgba(124, 92, 255, 0.28), transparent 60%),
+    radial-gradient(110% 80% at 100% 100%, rgba(34, 211, 238, 0.20), transparent 60%);
+}
+/* 网格纹理 */
+.auth-brand::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(circle at 30% 30%, #000 0%, transparent 78%);
+  -webkit-mask-image: radial-gradient(circle at 30% 30%, #000 0%, transparent 78%);
+  pointer-events: none;
+}
+.auth-brand > * { position: relative; z-index: 1; }
+
+.brand-top { display: flex; align-items: center; gap: 12px; }
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #7c5cff, #22d3ee);
+  box-shadow: 0 8px 26px rgba(124, 92, 255, 0.45);
+}
+.brand-mark svg { width: 22px; height: 22px; }
+.brand-name { font-size: 19px; font-weight: 700; letter-spacing: 0.2px; }
+
+.brand-main { max-width: 460px; }
+.brand-kicker {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: 18px;
+  padding: 5px 12px;
+  border: 1px solid rgba(34, 211, 238, 0.28);
+  border-radius: 999px;
+  background: rgba(34, 211, 238, 0.07);
+}
+.brand-h1 {
+  font-size: 42px;
+  line-height: 1.2;
+  font-weight: 800;
+  margin: 0 0 18px;
+  letter-spacing: -0.5px;
+}
+.brand-lead {
+  color: var(--text-dim);
+  font-size: 14.5px;
+  line-height: 1.75;
+  margin: 0 0 30px;
+}
+.brand-features { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; }
+.brand-features li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13.5px;
+  color: rgba(230, 230, 235, 0.86);
+}
+.feature-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.brand-foot { color: rgba(255, 255, 255, 0.28); font-size: 12px; letter-spacing: 0.3px; }
+
+/* —— 右侧表单区 —— */
+.auth-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
+}
+.auth-card {
+  position: relative;
+  width: 100%;
+  max-width: 392px;
+  padding: 38px 34px 30px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--border);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+  animation: card-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* 顶部渐变高光线 */
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 18%;
+  right: 18%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.9), transparent);
+}
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+
+.auth-head { margin-bottom: 26px; }
+.auth-head h2 { margin: 0 0 8px; font-size: 25px; font-weight: 700; letter-spacing: -0.2px; }
+.auth-head p { margin: 0; color: var(--text-dim); font-size: 13px; }
+
+.auth-card .n-form-item { margin-bottom: 2px; }
+.field-icon { width: 17px; height: 17px; opacity: 0.55; }
+
+/* 渐变主按钮 */
+.gradient-btn.n-button {
+  width: 100%;
+  height: 46px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #fff;
+  background: linear-gradient(120deg, #7c5cff 0%, #6d5cff 45%, #22d3ee 130%);
+  box-shadow: 0 10px 28px rgba(124, 92, 255, 0.35);
+  transition: transform 0.18s ease, box-shadow 0.25s ease, filter 0.25s ease;
+}
+.gradient-btn.n-button:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1.5px);
+  box-shadow: 0 14px 34px rgba(124, 92, 255, 0.48);
+}
+.gradient-btn.n-button:active { transform: translateY(0) scale(0.995); }
+.gradient-btn.n-button:focus-visible { outline: 2px solid rgba(167, 139, 250, 0.6); outline-offset: 2px; }
+
+.auth-switch {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+.auth-switch a { color: var(--accent2); text-decoration: none; font-weight: 500; }
+.auth-switch a:hover { text-decoration: underline; }
+
+@media (max-width: 980px) {
+  .auth-shell { grid-template-columns: 1fr; }
+  .auth-brand { display: none; }
+  .auth-panel { padding: 32px 20px; }
+}
+

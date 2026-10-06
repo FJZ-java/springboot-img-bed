@@ -1,0 +1,27 @@
+# 后端
+backend/target/
+backend/data/
+*.db
+*.db-journal
+
+# 前端
+frontend/node_modules/
+frontend/dist/
+
+# IDE / 环境
+.idea/
+.vscode/
+.env
+*.local
+
+
+# 本地杂项
+_tmp/
+identifier.sqlite
+
+# 本地杂项
+_tmp/
+identifier.sqlite
+
+# 本地密钥（绝不入库）
+backend/application-local.yml
