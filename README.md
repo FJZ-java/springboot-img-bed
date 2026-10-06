@@ -53,7 +53,7 @@
 ```yaml
 imgbed:
   github:
-    token: ghp_your_token_here
+    token: YOUR_GITHUB_TOKEN_HERE
 ```
 
 > 该文件已被 `.gitignore` 忽略，不会提交。也可以用环境变量 `GITHUB_TOKEN` 代替。
